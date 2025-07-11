@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  signal-engine:
+    build: ./signal-engine
+    container_name: signal-engine
+    volumes:
+      - ./signal-engine:/app
+    env_file:
+      - .env
+    command: python main.py
+    restart: unless-stopped
+
+  risk-manager:
+    build: ./risk-manager
+    container_name: risk-manager
+    volumes:
+      - ./risk-manager:/app
+    env_file:
+      - .env
+    restart: unless-stopped
+
+
+
+  dashboard:
+    build: ./dashboard
+    container_name: dashboard
+    ports:
+      - "3000:80"
+    volumes:
+      - ./dashboard/sensex:/app
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  execution-engine:
+    build: ./execution-engine
+    container_name: execution-engine
+    volumes:
+      - ./execution-engine:/app
+    env_file:
+      - .env
+    restart: unless-stopped

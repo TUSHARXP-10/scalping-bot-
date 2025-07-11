@@ -1,0 +1,29 @@
+name: Run Python Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [signal-engine, risk-manager]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r ${{ matrix.service }}/requirements-dev.txt
+
+      - name: Run tests
+        run: |
+          pytest ${{ matrix.service }}/tests/

@@ -1,0 +1,80 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python for signal-engine
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Python dependencies for signal-engine
+      run: pip install -r signal-engine/requirements.txt -r signal-engine/requirements-dev.txt
+      working-directory: ./sensex-scalper-supabase
+
+    - name: Run Black format check for signal-engine
+      run: black --check .
+      working-directory: ./sensex-scalper-supabase/signal-engine
+
+    - name: Run Flake8 linting for signal-engine
+      run: flake8 .
+      working-directory: ./sensex-scalper-supabase/signal-engine
+
+    - name: Run Pytest for signal-engine
+      run: pytest || true # Non-blocking for now
+      working-directory: ./sensex-scalper-supabase/signal-engine
+
+    - name: Set up Python for risk-manager
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Python dependencies for risk-manager
+      run: pip install -r risk-manager/requirements.txt -r risk-manager/requirements-dev.txt
+      working-directory: ./sensex-scalper-supabase
+
+    - name: Run Black format check for risk-manager
+      run: black --check .
+      working-directory: ./sensex-scalper-supabase/risk-manager
+
+    - name: Run Flake8 linting for risk-manager
+      run: flake8 .
+      working-directory: ./sensex-scalper-supabase/risk-manager
+
+    - name: Run Pytest for risk-manager
+      run: pytest || true # Non-blocking for now
+      working-directory: ./sensex-scalper-supabase/risk-manager
+
+    - name: Set up Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+
+    - name: Install rustfmt
+      run: rustup component add rustfmt
+
+    - name: Install clippy
+      run: rustup component add clippy
+
+    - name: Run cargo fmt check for execution-engine
+      run: cargo fmt -- --check
+      working-directory: ./sensex-scalper-supabase/execution-engine
+
+    - name: Run cargo clippy for execution-engine
+      run: cargo clippy -- -D warnings
+      working-directory: ./sensex-scalper-supabase/execution-engine

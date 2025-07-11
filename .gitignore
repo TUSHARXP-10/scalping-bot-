@@ -1,0 +1,49 @@
+# Node.js
+node_modules
+npm-debug.log
+yarn-debug.log
+.pnpm-store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python/
+env/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+
+# Supabase
+.supabase/
+supabase/.env
+
+# Docker
+*.dockerignore
+
+# IDEs and OS
+.idea/
+.vscode/
+.DS_Store
+thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Environment variables
+.env
+.env.*
+
+# Build artifacts
+build/
+dist/
+
+# Specific to this project
+/sensex-scalper-supabase/Cargo.lock
