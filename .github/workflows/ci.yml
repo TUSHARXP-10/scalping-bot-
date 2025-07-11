@@ -10,53 +10,63 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+     runs-on: ubuntu-latest
+     strategy:
+       matrix:
+         service: [signal-engine, risk-manager]
+
+
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python for signal-engine
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
 
-    - name: Install Python dependencies for signal-engine
-      run: pip install -r signal-engine/requirements.txt -r signal-engine/requirements-dev.txt
-      working-directory: ./sensex-scalper-supabase
+     - name: Install Python dependencies
+       run: pip install -r requirements.txt -r requirements-dev.txt
+       working-directory: ${{ matrix.service }}
 
-    - name: Run Black format check for signal-engine
-      run: black --check .
-      working-directory: ./sensex-scalper-supabase/signal-engine
+     - name: Run Black format check
+       run: black --check .
+       working-directory: ${{ matrix.service }}
 
-    - name: Run Flake8 linting for signal-engine
-      run: flake8 .
-      working-directory: ./sensex-scalper-supabase/signal-engine
+     - name: Run Flake8 linting
+       run: flake8 .
+       working-directory: ${{ matrix.service }}
 
-    - name: Run Pytest for signal-engine
-      run: pytest || true # Non-blocking for now
-      working-directory: ./sensex-scalper-supabase/signal-engine
+     - name: Run Pytest
+       run: pytest || true # Non-blocking for now
+       working-directory: ${{ matrix.service }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: Set up Python for risk-manager
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
 
-    - name: Install Python dependencies for risk-manager
-      run: pip install -r risk-manager/requirements.txt -r risk-manager/requirements-dev.txt
-      working-directory: ./sensex-scalper-supabase
+    - name: Install Python dependencies
+      run: pip install -r requirements.txt -r requirements-dev.txt
+      working-directory: ${{ matrix.service }}
 
-    - name: Run Black format check for risk-manager
+    - name: Run Black format check
       run: black --check .
-      working-directory: ./sensex-scalper-supabase/risk-manager
+      working-directory: ${{ matrix.service }}
 
-    - name: Run Flake8 linting for risk-manager
+    - name: Run Flake8 linting
       run: flake8 .
-      working-directory: ./sensex-scalper-supabase/risk-manager
+      working-directory: ${{ matrix.service }}
 
-    - name: Run Pytest for risk-manager
-      run: pytest || true # Non-blocking for now
-      working-directory: ./sensex-scalper-supabase/risk-manager
+  rust_build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
     - name: Set up Rust toolchain
       uses: actions-rs/toolchain@v1
@@ -78,3 +88,9 @@ jobs:
     - name: Run cargo clippy for execution-engine
       run: cargo clippy -- -D warnings
       working-directory: ./sensex-scalper-supabase/execution-engine
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [signal-engine, risk-manager]
